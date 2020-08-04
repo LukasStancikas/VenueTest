@@ -24,7 +24,6 @@ class VenueAdapter : ListAdapter<Venue, VenueAdapter.MyViewHolder>(CharacterDiff
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         getItem(position)?.let { item ->
             holder.bind(item, itemClick)
-
         }
     }
 
