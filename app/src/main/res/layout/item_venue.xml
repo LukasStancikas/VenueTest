@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_card_view"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardElevation="@dimen/elevation_card_view">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/labelBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="right"
+            app:constraint_referenced_ids="labelContainer" />
+
+        <LinearLayout
+            android:id="@+id/labelContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:divider="@drawable/divider_card_label"
+            android:orientation="vertical"
+            android:showDividers="middle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                style="@style/LabelStyle"
+                android:text="@string/label_name" />
+
+            <TextView
+                style="@style/LabelStyle"
+                android:text="@string/label_location" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_label_side"
+            android:divider="@drawable/divider_card_label"
+            android:orientation="vertical"
+            android:showDividers="middle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/labelBarrier"
+            app:layout_constraintTop_toTopOf="@+id/labelContainer">
+
+            <TextView
+                android:id="@+id/itemName"
+                style="@style/ValueStyle"
+                tools:text="McDonalds" />
+
+            <TextView
+                android:id="@+id/itemLocation"
+                style="@style/ValueStyle"
+                android:maxLines="2"
+                tools:text="New York Street, somewhere, NY, Longer text for anyone to read" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
