@@ -36,8 +36,7 @@ class VenueAdapter : ListAdapter<Venue, VenueAdapter.MyViewHolder>(CharacterDiff
 
         fun bind(item: Venue, itemClick: ((Venue) -> Unit)?) {
             itemBinding.itemName.text = item.name
-            // TODO more location handling
-            itemBinding.itemLocation.text = item.location.address
+            itemBinding.itemLocation.text = item.location.toString()
             itemBinding.root.setOnClickListener {
                 itemClick?.invoke(item)
             }

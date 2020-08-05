@@ -70,6 +70,12 @@ dependencies {
     // Permissions
     implementation 'com.github.tbruyelle:rxpermissions:0.11' // Not latest to support RxJava2
 
+    // Room Db
+    annotationProcessor "androidx.room:room-compiler:$roomVersion" // For Kotlin use kapt instead of annotationProcessor
+    implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+    implementation "androidx.room:room-rxjava2:$roomVersion"
+
     // Test
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'

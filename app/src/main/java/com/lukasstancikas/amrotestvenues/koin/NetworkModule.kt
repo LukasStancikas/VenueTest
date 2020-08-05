@@ -2,8 +2,8 @@ package com.lukasstancikas.amrotestvenues.koin
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.lukasstancikas.amrotestvenues.network.ApiController
-import com.lukasstancikas.amrotestvenues.network.ApiControllerImpl
+import com.lukasstancikas.amrotestvenues.network.VenueRepository
+import com.lukasstancikas.amrotestvenues.network.VenueRepositoryImpl
 import com.lukasstancikas.amrotestvenues.network.HeaderInterceptor
 import com.lukasstancikas.amrotestvenues.network.NetworkApi
 import okhttp3.OkHttpClient
@@ -27,7 +27,7 @@ object NetworkModule {
             single { provideRetrofit(get(), get()) }
             single { provideApi(get()) }
 
-            single<ApiController> { ApiControllerImpl(get()) }
+            single<VenueRepository> { VenueRepositoryImpl(get()) }
         }
     }
 

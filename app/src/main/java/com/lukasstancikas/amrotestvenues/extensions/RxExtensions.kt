@@ -1,5 +1,6 @@
 package com.lukasstancikas.amrotestvenues.extensions
 
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers

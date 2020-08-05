@@ -4,7 +4,7 @@ import com.lukasstancikas.amrotestvenues.base.BaseViewModel
 import com.lukasstancikas.amrotestvenues.extensions.scheduleOnBackgroundThread
 import com.lukasstancikas.amrotestvenues.model.LatLng
 import com.lukasstancikas.amrotestvenues.model.Venue
-import com.lukasstancikas.amrotestvenues.network.ApiController
+import com.lukasstancikas.amrotestvenues.network.VenueRepository
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.Observables
@@ -12,8 +12,9 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
-class VenuesViewModel(private val api: ApiController) : BaseViewModel() {
+class VenuesViewModel(private val api: VenueRepository) : BaseViewModel() {
 
     private val _venues = BehaviorSubject.create<List<Venue>>()
     val venues: Observable<List<Venue>> get() = _venues.hide()
@@ -42,23 +43,29 @@ class VenuesViewModel(private val api: ApiController) : BaseViewModel() {
     }
 
     fun refreshVenues() {
+        disposables.clear()
         Observables.combineLatest(
             _latLng,
             _query
         )
             .take(1)
             .singleElement()
-            .flatMapSingle {
+            .withLoadingEvents()
+            .flatMapObservable {
                 api
                     .getVenues(it.first, it.second)
                     .scheduleOnBackgroundThread()
+                    .distinctUntilChanged()
+                    .debounce(DB_DEBOUNCE_INTERVAL_MS, TimeUnit.MILLISECONDS)
             }
-            .withLoadingEvents()
             .subscribeBy(
-                onSuccess = _venues::onNext,
+                onNext = _venues::onNext,
                 onError = Timber::e
             )
             .addTo(disposables)
     }
 
+    companion object {
+        private const val DB_DEBOUNCE_INTERVAL_MS = 500L
+    }
 }

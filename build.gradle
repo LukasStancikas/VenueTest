@@ -11,6 +11,7 @@ buildscript {
         koinVersion = '2.0.1'
         rxBindingVersion = '3.0.0'
         testRulesVersion = '1.2.0'
+        roomVersion = "2.2.5"
     }
     repositories {
         google()

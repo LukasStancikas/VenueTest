@@ -1,6 +1,14 @@
 package com.lukasstancikas.amrotestvenues.model
 
-data class Venues(val response: VenueResponse)
-data class VenueResponse(val venues: List<Venue>)
-data class Venue(val id: String, val name: String, val location: VenueLocation)
-data class VenueLocation(val address: String, val city: String, val state: String)
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
+data class Venue(
+    @PrimaryKey val id: String,
+    val name: String,
+    val description: String?,
+    val rating: Double,
+    @Embedded val location: VenueLocation
+)
