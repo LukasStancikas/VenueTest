@@ -6,4 +6,6 @@
     <dimen name="margin_details">8dp</dimen>
     <dimen name="margin_card_view">4dp</dimen>
     <dimen name="elevation_card_view">2dp</dimen>
+    <dimen name="details_primary_size">20sp</dimen>
+    <dimen name="details_secondary_size">16sp</dimen>
 </resources>

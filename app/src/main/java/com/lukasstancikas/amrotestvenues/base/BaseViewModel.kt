@@ -17,4 +17,9 @@ abstract class BaseViewModel : ViewModel() {
         return doOnSubscribe { _loading.onNext(true) }
             .doFinally { _loading.onNext(false) }
     }
+
+    protected fun <T> Observable<T>.withLoadingEvents(): Observable<T> {
+        return doOnSubscribe { _loading.onNext(true) }
+            .doOnNext { _loading.onNext(false) }
+    }
 }

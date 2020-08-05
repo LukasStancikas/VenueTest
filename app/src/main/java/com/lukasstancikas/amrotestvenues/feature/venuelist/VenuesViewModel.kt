@@ -14,7 +14,7 @@ import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-class VenuesViewModel(private val api: VenueRepository) : BaseViewModel() {
+class VenuesViewModel(private val repo: VenueRepository) : BaseViewModel() {
 
     private val _venues = BehaviorSubject.create<List<Venue>>()
     val venues: Observable<List<Venue>> get() = _venues.hide()
@@ -52,7 +52,7 @@ class VenuesViewModel(private val api: VenueRepository) : BaseViewModel() {
             .singleElement()
             .withLoadingEvents()
             .flatMapObservable {
-                api
+                repo
                     .getVenues(it.first, it.second)
                     .scheduleOnBackgroundThread()
                     .distinctUntilChanged()

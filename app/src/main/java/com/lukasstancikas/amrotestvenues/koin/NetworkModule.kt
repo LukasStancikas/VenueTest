@@ -27,7 +27,6 @@ object NetworkModule {
             single { provideRetrofit(get(), get()) }
             single { provideApi(get()) }
 
-            single<VenueRepository> { VenueRepositoryImpl(get()) }
         }
     }
 

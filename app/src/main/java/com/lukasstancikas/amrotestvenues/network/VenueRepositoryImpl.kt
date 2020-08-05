@@ -14,25 +14,42 @@ class VenueRepositoryImpl(
     private val api: NetworkApi,
     private val db: AppDatabase
 ) : VenueRepository {
-    override fun getVenues(latLng: LatLng, query: String): Observable<List<Venue>> =
-        Observable.concatArray(
-            db.venueDao().getAllWithQuery(QUERY_LIMIT, query),
-            getVenuesFromApi(latLng, QUERY_LIMIT, query)
-        )
+    override fun getVenues(latLng: LatLng, query: String, onNetworkError: ((Throwable) -> Unit)?): Observable<List<Venue>> {
+        val dbCall = db
+            .venueDao()
+            .getAll()
+            .map { it.filter { it.name.toLowerCase().contains(query.toLowerCase()) } }
 
-    private fun getVenuesFromApi(latLng: LatLng, limit: Int, query: String) = api
-        .getVenues(
-            latLng = latLng,
-            limit = limit,
-            query = query.takeIf { it.isNotEmpty() }
+        return Observable.merge(
+            dbCall,
+            getVenuesFromApi(latLng, QUERY_LIMIT, query, onNetworkError)
         )
-        .map {
-            it.response.venues
-        }
-        .toObservable()
-        .doOnNext(::addVenuesToDb)
+    }
 
-    override fun getVenuesDetails(id: String): Single<Venue> {
+    private fun getVenuesFromApi(
+        latLng: LatLng,
+        limit: Int,
+        query: String,
+        onNetworkError: ((Throwable) -> Unit)?
+    ): Observable<List<Venue>> {
+        return api
+            .getVenues(
+                latLng = latLng,
+                limit = limit,
+                query = query.takeIf { it.isNotEmpty() }
+            )
+            .map {
+                it.response.venues
+            }
+            .doOnSuccess(::addVenuesToDb)
+            .doOnError(onNetworkError)
+            .toObservable()
+            .materialize()
+            .filter { !it.isOnError }
+            .dematerialize()
+    }
+
+    override fun getVenuesDetails(id: String, onNetworkError: ((Throwable) -> Unit)?): Single<Venue> {
         return api.getVenueDetails(id).map { it.response.venue }
     }
 
@@ -40,7 +57,7 @@ class VenueRepositoryImpl(
     // We do not care about the result of async insertion
     private fun addVenuesToDb(venues: List<Venue>) {
         db.venueDao()
-            .updateAll(venues)
+            .insertAll(venues)
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .subscribeBy(

@@ -14,6 +14,7 @@ import com.jakewharton.rxbinding3.appcompat.queryTextChanges
 import com.jakewharton.rxbinding3.swiperefreshlayout.refreshes
 import com.lukasstancikas.amrotestvenues.R
 import com.lukasstancikas.amrotestvenues.databinding.ActivityMainBinding
+import com.lukasstancikas.amrotestvenues.databinding.ActivityVenueListBinding
 import com.lukasstancikas.amrotestvenues.extensions.scheduleOnBackgroundThread
 import com.lukasstancikas.amrotestvenues.model.Venue
 import com.patloew.rxlocation.RxLocation
@@ -35,11 +36,11 @@ class VenueListActivity : AppCompatActivity() {
     private val rxLocation by inject<RxLocation>()
     private val disposables = CompositeDisposable()
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityVenueListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityVenueListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.recycler.adapter = adapter
         adapter.onItemClick(::onItemClick)

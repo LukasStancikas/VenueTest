@@ -3,6 +3,7 @@ package com.lukasstancikas.amrotestvenues.app
 import android.app.Application
 import com.lukasstancikas.amrotestvenues.koin.VenuesModule
 import com.lukasstancikas.amrotestvenues.koin.NetworkModule
+import com.lukasstancikas.amrotestvenues.koin.RepositoryModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -22,8 +23,9 @@ class VenuesApplication : Application() {
 
             modules(
                 listOf(
+                    VenuesModule.get(),
                     NetworkModule.get(),
-                    VenuesModule.get()
+                    RepositoryModule.get()
                 )
             )
         }
