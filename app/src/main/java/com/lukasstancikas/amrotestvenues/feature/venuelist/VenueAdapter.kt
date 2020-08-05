@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lukasstancikas.amrotestvenues.databinding.ItemVenueBinding
 import com.lukasstancikas.amrotestvenues.model.Venue
 
-class VenueAdapter : ListAdapter<Venue, VenueAdapter.MyViewHolder>(CharacterDiffCallback()) {
+class VenueAdapter : ListAdapter<Venue, VenueAdapter.MyViewHolder>(DiffCallback()) {
 
     private var itemClick: ((Venue) -> Unit)? = null
 
@@ -43,7 +43,7 @@ class VenueAdapter : ListAdapter<Venue, VenueAdapter.MyViewHolder>(CharacterDiff
         }
     }
 
-    private class CharacterDiffCallback : DiffUtil.ItemCallback<Venue>() {
+    private class DiffCallback : DiffUtil.ItemCallback<Venue>() {
 
         override fun areItemsTheSame(oldItem: Venue, newItem: Venue): Boolean {
             return oldItem.id == newItem.id

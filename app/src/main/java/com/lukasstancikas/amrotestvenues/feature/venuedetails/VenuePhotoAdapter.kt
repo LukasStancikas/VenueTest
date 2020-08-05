@@ -10,7 +10,7 @@ import com.lukasstancikas.amrotestvenues.databinding.ItemVenuePhotoBinding
 import com.lukasstancikas.amrotestvenues.model.VenuePhoto
 
 class VenuePhotoAdapter :
-    ListAdapter<VenuePhoto, VenuePhotoAdapter.MyViewHolder>(CharacterDiffCallback()) {
+    ListAdapter<VenuePhoto, VenuePhotoAdapter.MyViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -37,7 +37,7 @@ class VenuePhotoAdapter :
         }
     }
 
-    private class CharacterDiffCallback : DiffUtil.ItemCallback<VenuePhoto>() {
+    private class DiffCallback : DiffUtil.ItemCallback<VenuePhoto>() {
         override fun areItemsTheSame(oldItem: VenuePhoto, newItem: VenuePhoto): Boolean {
             return oldItem.id == newItem.id
         }
