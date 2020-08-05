@@ -3,6 +3,7 @@ package com.lukasstancikas.amrotestvenues.network
 import com.lukasstancikas.amrotestvenues.koin.NetworkModule.API_VERSION
 import com.lukasstancikas.amrotestvenues.koin.NetworkModule.CLIENT_ID
 import com.lukasstancikas.amrotestvenues.koin.NetworkModule.CLIENT_SECRET
+import com.lukasstancikas.amrotestvenues.koin.NetworkModule.VENUE_RADIUS
 import com.lukasstancikas.amrotestvenues.model.*
 import io.reactivex.Single
 import retrofit2.http.GET
@@ -18,7 +19,8 @@ interface NetworkApi {
         @Query("ll") latLng: LatLng,
         @Query("limit") limit: Int,
         @Query("query") query: String?,
-        @Query("v") version: String = API_VERSION
+        @Query("v") version: String = API_VERSION,
+        @Query("radius") radius: Int = VENUE_RADIUS
     ): Single<ForSquareResponse<VenueList>>
 
     @GET("venues/{venueId}")
