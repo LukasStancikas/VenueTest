@@ -28,7 +28,9 @@ class VenueDetailsViewModel(private val repo: VenueRepository) : BaseViewModel()
     fun refreshVenue(id: String) {
         disposables.clear()
         repo
-            .getVenuesDetails(id)
+            .getVenuesDetails(id) { error ->
+                error.localizedMessage?.let { _error.onNext(it) }
+            }
             .scheduleOnBackgroundThread()
             .debounce(DB_DEBOUNCE_INTERVAL_MS, TimeUnit.MILLISECONDS)
             .withLoadingEvents()

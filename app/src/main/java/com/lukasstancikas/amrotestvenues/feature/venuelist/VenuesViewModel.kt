@@ -53,7 +53,9 @@ class VenuesViewModel(private val repo: VenueRepository) : BaseViewModel() {
             .withLoadingEvents()
             .flatMapObservable {
                 repo
-                    .getVenues(it.first, it.second)
+                    .getVenues(it.first, it.second) {error ->
+                        error.localizedMessage?.let { _error.onNext(it) }
+                    }
                     .scheduleOnBackgroundThread()
                     .distinctUntilChanged()
                     .debounce(DB_DEBOUNCE_INTERVAL_MS, TimeUnit.MILLISECONDS)

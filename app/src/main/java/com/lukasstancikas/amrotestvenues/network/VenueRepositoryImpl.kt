@@ -5,7 +5,6 @@ import com.lukasstancikas.amrotestvenues.db.AppDatabase
 import com.lukasstancikas.amrotestvenues.model.LatLng
 import com.lukasstancikas.amrotestvenues.model.Venue
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
@@ -14,7 +13,11 @@ class VenueRepositoryImpl(
     private val api: NetworkApi,
     private val db: AppDatabase
 ) : VenueRepository {
-    override fun getVenues(latLng: LatLng, query: String, onNetworkError: ((Throwable) -> Unit)?): Observable<List<Venue>> {
+    override fun getVenues(
+        latLng: LatLng,
+        query: String,
+        onNetworkError: (Throwable) -> Unit
+    ): Observable<List<Venue>> {
         val dbCall = db
             .venueDao()
             .getAll()
@@ -30,7 +33,7 @@ class VenueRepositoryImpl(
         latLng: LatLng,
         limit: Int,
         query: String,
-        onNetworkError: ((Throwable) -> Unit)?
+        onNetworkError: (Throwable) -> Unit
     ): Observable<List<Venue>> {
         return api
             .getVenues(
@@ -49,8 +52,24 @@ class VenueRepositoryImpl(
             .dematerialize()
     }
 
-    override fun getVenuesDetails(id: String, onNetworkError: ((Throwable) -> Unit)?): Single<Venue> {
-        return api.getVenueDetails(id).map { it.response.venue }
+    override fun getVenuesDetails(
+        id: String,
+        onNetworkError: (Throwable) -> Unit
+    ): Observable<Venue> {
+        val apiCall = api
+            .getVenueDetails(id)
+            .map { it.response.venue }
+            .doOnSuccess(::addVenueToDb)
+            .doOnError(onNetworkError)
+            .toObservable()
+            .materialize()
+            .filter { !it.isOnError }
+            .dematerialize<Venue>()
+
+        return Observable.merge(
+            db.venueDao().getById(id),
+            apiCall
+        )
     }
 
     @SuppressLint("CheckResult")
@@ -62,6 +81,19 @@ class VenueRepositoryImpl(
             .observeOn(Schedulers.io())
             .subscribeBy(
                 onComplete = { Timber.d("added ${venues.size} to DB") },
+                onError = Timber::e
+            )
+    }
+
+    @SuppressLint("CheckResult")
+    // We do not care about the result of async insertion
+    private fun addVenueToDb(venue: Venue) {
+        db.venueDao()
+            .insert(venue)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribeBy(
+                onComplete = { Timber.d("added \"${venue.name}\" details to DB") },
                 onError = Timber::e
             )
     }

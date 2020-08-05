@@ -3,7 +3,10 @@
     <string name="hint_search_venues">Venue name</string>
     <string name="label_name">Name</string>
     <string name="label_location">Location</string>
-    <string name="label_rating">Rating: %d</string>
+    <string name="label_rating">Rating: %.1f</string>
+    <string name="label_phone">Phone: %s</string>
+    <string name="label_twitter">Twitter: %s</string>
+    <string name="label_instagram">Instagram: %s</string>
 
     <string name="location_rationale_title">Location access</string>
     <string name="location_rationale_description">We need to access your current location to show nearby venues</string>

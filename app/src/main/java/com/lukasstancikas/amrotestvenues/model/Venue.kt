@@ -10,5 +10,6 @@ data class Venue(
     val name: String,
     val description: String?,
     val rating: Double,
-    @Embedded val location: VenueLocation
+    @Embedded val location: VenueLocation,
+    @Embedded val contact: VenueContact?
 )

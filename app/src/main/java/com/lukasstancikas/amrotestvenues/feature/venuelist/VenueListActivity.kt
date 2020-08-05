@@ -10,12 +10,13 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.LocationRequest
+import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.appcompat.queryTextChanges
 import com.jakewharton.rxbinding3.swiperefreshlayout.refreshes
 import com.lukasstancikas.amrotestvenues.R
-import com.lukasstancikas.amrotestvenues.databinding.ActivityMainBinding
 import com.lukasstancikas.amrotestvenues.databinding.ActivityVenueListBinding
 import com.lukasstancikas.amrotestvenues.extensions.scheduleOnBackgroundThread
+import com.lukasstancikas.amrotestvenues.feature.venuedetails.VenueDetailsActivity
 import com.lukasstancikas.amrotestvenues.model.Venue
 import com.patloew.rxlocation.RxLocation
 import com.tbruyelle.rxpermissions2.RxPermissions
@@ -139,6 +140,15 @@ class VenueListActivity : AppCompatActivity() {
                 onError = Timber::e
             )
             .addTo(disposables)
+
+        viewModel
+            .error
+            .scheduleOnBackgroundThread()
+            .subscribeBy(
+                onNext = { Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG) },
+                onError = Timber::e
+            )
+            .addTo(disposables)
     }
 
     private fun showLocationRationale() {
@@ -179,7 +189,7 @@ class VenueListActivity : AppCompatActivity() {
     }
 
     private fun onItemClick(venue: Venue) {
-
+        VenueDetailsActivity.startActivity(this, venue.id)
     }
 
 
