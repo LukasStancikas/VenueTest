@@ -8,4 +8,5 @@
     <dimen name="elevation_card_view">2dp</dimen>
     <dimen name="details_primary_size">20sp</dimen>
     <dimen name="details_secondary_size">16sp</dimen>
+    <dimen name="photo_height">200dp</dimen>
 </resources>

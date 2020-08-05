@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.swiperefreshlayout.refreshes
 import com.lukasstancikas.amrotestvenues.R
 import com.lukasstancikas.amrotestvenues.databinding.ActivityVenueDetailsBinding
+import com.lukasstancikas.amrotestvenues.db.VenueWithPhotos
 import com.lukasstancikas.amrotestvenues.extensions.ExtraNotNull
 import com.lukasstancikas.amrotestvenues.extensions.scheduleOnBackgroundThread
 import com.lukasstancikas.amrotestvenues.feature.venuelist.VenueAdapter
@@ -23,7 +24,7 @@ class VenueDetailsActivity : AppCompatActivity() {
 
     private val venueId by ExtraNotNull(VENUE_ID_KEY, "")
 
-    private val adapter = VenueAdapter()
+    private val adapter = VenuePhotoAdapter()
     private val viewModel by viewModel<VenueDetailsViewModel>()
     private val disposables = CompositeDisposable()
 
@@ -83,17 +84,19 @@ class VenueDetailsActivity : AppCompatActivity() {
             .addTo(disposables)
     }
 
-    private fun loadVenue(venue: Venue) {
-        binding.name.text = venue.name
-        binding.description.text = venue.description
-        binding.rating.text = getString(R.string.label_rating, venue.rating)
-        binding.address.text = venue.location.toString()
+    private fun loadVenue(venueWithPhotos: VenueWithPhotos) {
+        binding.name.text = venueWithPhotos.venue.name
+        binding.description.text = venueWithPhotos.venue.description
+        binding.rating.text = getString(R.string.label_rating, venueWithPhotos.venue.rating)
+        binding.address.text = venueWithPhotos.venue.location.toString()
         val contacts = listOf(
-            getString(R.string.label_phone, venue.contact?.formattedPhone),
-            getString(R.string.label_twitter, venue.contact?.twitter),
-            getString(R.string.label_instagram, venue.contact?.instagram)
+            getString(R.string.label_phone, venueWithPhotos.venue.contact?.formattedPhone),
+            getString(R.string.label_twitter, venueWithPhotos.venue.contact?.twitter),
+            getString(R.string.label_instagram, venueWithPhotos.venue.contact?.instagram)
         )
         binding.contacts.text = TextUtils.join("\n", contacts)
+        // If API returns only 1 photo, duplicatin "venueWithPhotos.photos" with "+" operator is recommended
+        adapter.submitList(venueWithPhotos.photos)
     }
 
     companion object {

@@ -53,7 +53,7 @@ class VenuesViewModel(private val repo: VenueRepository) : BaseViewModel() {
             .withLoadingEvents()
             .flatMapObservable {
                 repo
-                    .getVenues(it.first, it.second) {error ->
+                    .getVenues(it.first, it.second) { error ->
                         error.localizedMessage?.let { _error.onNext(it) }
                     }
                     .scheduleOnBackgroundThread()

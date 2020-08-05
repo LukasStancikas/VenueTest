@@ -50,6 +50,10 @@ dependencies {
     implementation "com.jakewharton.rxbinding3:rxbinding-material:$rxBindingVersion"
     implementation "com.jakewharton.rxbinding3:rxbinding-appcompat:$rxBindingVersion"
 
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    kapt 'com.github.bumptech.glide:compiler:4.10.0'
+
     // Network
     implementation "com.google.code.gson:gson:2.8.5"
     implementation "com.squareup.okhttp3:okhttp:$okHttpVersion"

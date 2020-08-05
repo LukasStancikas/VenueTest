@@ -28,4 +28,12 @@ interface NetworkApi {
         @Query("client_secret") clientSecret: String = CLIENT_SECRET,
         @Query("v") version: String = API_VERSION
     ): Single<ForSquareResponse<VenueDetails>>
+
+    @GET("venues/{venueId}/photos")
+    fun getVenuePhotos(
+        @Path ("venueId") venueId: String,
+        @Query("client_id") clientId: String = CLIENT_ID,
+        @Query("client_secret") clientSecret: String = CLIENT_SECRET,
+        @Query("v") version: String = API_VERSION
+    ): Single<ForSquareResponse<VenuePhotos>>
 }

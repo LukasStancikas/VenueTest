@@ -2,8 +2,10 @@ package com.lukasstancikas.amrotestvenues.network
 
 import android.annotation.SuppressLint
 import com.lukasstancikas.amrotestvenues.db.AppDatabase
+import com.lukasstancikas.amrotestvenues.db.VenueWithPhotos
 import com.lukasstancikas.amrotestvenues.model.LatLng
 import com.lukasstancikas.amrotestvenues.model.Venue
+import com.lukasstancikas.amrotestvenues.model.VenuePhoto
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -21,11 +23,37 @@ class VenueRepositoryImpl(
         val dbCall = db
             .venueDao()
             .getAll()
+                // Venue Query + Limit not working in Room DB Query, have to fake post SQL
             .map { it.filter { it.name.toLowerCase().contains(query.toLowerCase()) } }
 
         return Observable.merge(
             dbCall,
             getVenuesFromApi(latLng, QUERY_LIMIT, query, onNetworkError)
+        )
+    }
+
+    override fun getVenuesDetails(
+        id: String,
+        onNetworkError: (Throwable) -> Unit
+    ): Observable<VenueWithPhotos> {
+        val apiCall = api
+            .getVenueDetails(id)
+            .map { it.response.venue }
+            .doOnSuccess(::addVenueToDb)
+            .flatMap { venue ->
+                api.getVenuePhotos(venue.id).map {
+                    VenueWithPhotos(venue, it.response.photos)
+                }
+            }
+            .doOnError(onNetworkError)
+            .toObservable()
+            .materialize()
+            .filter { !it.isOnError }
+            .dematerialize<VenueWithPhotos>()
+
+        return Observable.merge(
+            db.venueDao().getByIdWithPhotos(id),
+            apiCall
         )
     }
 
@@ -52,26 +80,6 @@ class VenueRepositoryImpl(
             .dematerialize()
     }
 
-    override fun getVenuesDetails(
-        id: String,
-        onNetworkError: (Throwable) -> Unit
-    ): Observable<Venue> {
-        val apiCall = api
-            .getVenueDetails(id)
-            .map { it.response.venue }
-            .doOnSuccess(::addVenueToDb)
-            .doOnError(onNetworkError)
-            .toObservable()
-            .materialize()
-            .filter { !it.isOnError }
-            .dematerialize<Venue>()
-
-        return Observable.merge(
-            db.venueDao().getById(id),
-            apiCall
-        )
-    }
-
     @SuppressLint("CheckResult")
     // We do not care about the result of async insertion
     private fun addVenuesToDb(venues: List<Venue>) {
@@ -94,6 +102,14 @@ class VenueRepositoryImpl(
             .observeOn(Schedulers.io())
             .subscribeBy(
                 onComplete = { Timber.d("added \"${venue.name}\" details to DB") },
+                onError = Timber::e
+            )
+        db.photosDao()
+            .insertAll(venue.getPhotoList())
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribeBy(
+                onComplete = { Timber.d("added ${venue.getPhotoList().size} photos to DB") },
                 onError = Timber::e
             )
     }

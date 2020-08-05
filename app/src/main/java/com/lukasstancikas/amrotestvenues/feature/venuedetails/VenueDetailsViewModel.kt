@@ -1,6 +1,7 @@
 package com.lukasstancikas.amrotestvenues.feature.venuedetails
 
 import com.lukasstancikas.amrotestvenues.base.BaseViewModel
+import com.lukasstancikas.amrotestvenues.db.VenueWithPhotos
 import com.lukasstancikas.amrotestvenues.extensions.scheduleOnBackgroundThread
 import com.lukasstancikas.amrotestvenues.model.Venue
 import com.lukasstancikas.amrotestvenues.network.VenueRepository
@@ -14,8 +15,8 @@ import java.util.concurrent.TimeUnit
 
 class VenueDetailsViewModel(private val repo: VenueRepository) : BaseViewModel() {
 
-    private val _venue = BehaviorSubject.create<Venue>()
-    val venue: Observable<Venue> get() = _venue.hide()
+    private val _venue = BehaviorSubject.create<VenueWithPhotos>()
+    val venue: Observable<VenueWithPhotos> get() = _venue.hide()
 
     private val disposables = CompositeDisposable()
 
