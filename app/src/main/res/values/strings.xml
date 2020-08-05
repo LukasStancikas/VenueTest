@@ -3,4 +3,10 @@
     <string name="hint_search_venues">Venue name</string>
     <string name="label_name">Name</string>
     <string name="label_location">Location</string>
+
+    <string name="location_rationale_title">Location access</string>
+    <string name="location_rationale_description">We need to access your current location to show nearby venues</string>
+
+    <string name="location_permission_denied_title">Location access</string>
+    <string name="location_permission_denied_description">We need to access your current location to show nearby venues, go to settings to enable it</string>
 </resources>

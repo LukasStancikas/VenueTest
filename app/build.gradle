@@ -24,6 +24,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -62,6 +66,9 @@ dependencies {
     // Location
     implementation 'com.patloew.rxlocation:rxlocation:1.0.5'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+
+    // Permissions
+    implementation 'com.github.tbruyelle:rxpermissions:0.11' // Not latest to support RxJava2
 
     // Test
     testImplementation 'junit:junit:4.12'
