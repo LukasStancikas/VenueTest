@@ -1,11 +1,11 @@
 package com.lukasstancikas.amrotestvenues.db.dao
 
-import androidx.room.*
-import com.lukasstancikas.amrotestvenues.db.VenueWithPhotos
-import com.lukasstancikas.amrotestvenues.model.Venue
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import com.lukasstancikas.amrotestvenues.model.VenuePhoto
 import io.reactivex.Completable
-import io.reactivex.Observable
 
 @Dao
 interface PhotosDao {

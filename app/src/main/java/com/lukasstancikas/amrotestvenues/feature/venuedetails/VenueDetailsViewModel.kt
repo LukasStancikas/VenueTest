@@ -3,7 +3,6 @@ package com.lukasstancikas.amrotestvenues.feature.venuedetails
 import com.lukasstancikas.amrotestvenues.base.BaseViewModel
 import com.lukasstancikas.amrotestvenues.db.VenueWithPhotos
 import com.lukasstancikas.amrotestvenues.extensions.scheduleOnBackgroundThread
-import com.lukasstancikas.amrotestvenues.model.Venue
 import com.lukasstancikas.amrotestvenues.network.VenueRepository
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -19,7 +18,6 @@ class VenueDetailsViewModel(private val repo: VenueRepository) : BaseViewModel()
     val venue: Observable<VenueWithPhotos> get() = _venue.hide()
 
     private val disposables = CompositeDisposable()
-
 
     override fun onCleared() {
         disposables.clear()

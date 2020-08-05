@@ -21,13 +21,13 @@ import com.lukasstancikas.amrotestvenues.model.Venue
 import com.patloew.rxlocation.RxLocation
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-
 
 class VenueListActivity : AppCompatActivity() {
 
@@ -36,6 +36,7 @@ class VenueListActivity : AppCompatActivity() {
     private val locationRequest by inject<LocationRequest>()
     private val rxLocation by inject<RxLocation>()
     private val disposables = CompositeDisposable()
+    private var rxLocationDisposable: Disposable? = null
 
     private lateinit var binding: ActivityVenueListBinding
 
@@ -54,22 +55,25 @@ class VenueListActivity : AppCompatActivity() {
         bindToViews()
     }
 
+    override fun onStop() {
+        super.onStop()
+        disposables.clear()
+        rxLocationDisposable?.dispose()
+    }
+
     @SuppressLint("MissingPermission")
     // Permission check is not missing, checkLocationSettingsAndPermissions() checks it inside
     private fun bindToLocation() {
         checkLocationSettingsAndPermissions {
-            rxLocation
+            rxLocationDisposable?.dispose()
+            rxLocationDisposable = rxLocation
                 .location()
                 .updates(locationRequest)
-                .map {
-                    Pair(it.latitude, it.longitude)
-                }
                 .scheduleOnBackgroundThread()
                 .subscribeBy(
-                    onNext = { viewModel.onNewLocation(it.first, it.second) },
+                    onNext = { viewModel.onNewLocation(it.latitude, it.longitude) },
                     onError = Timber::e
                 )
-                .addTo(disposables)
         }
     }
 
@@ -88,6 +92,9 @@ class VenueListActivity : AppCompatActivity() {
                 }
             }
             .scheduleOnBackgroundThread()
+            .doOnError {
+                binding.swipeRefresh.isRefreshing = false
+            }
             .subscribeBy(
                 onNext = { permission ->
                     when {
@@ -105,7 +112,10 @@ class VenueListActivity : AppCompatActivity() {
             .swipeRefresh
             .refreshes()
             .subscribeBy(
-                onNext = { viewModel.refreshVenues() },
+                onNext = {
+                    bindToLocation()
+                    viewModel.refreshVenues()
+                },
                 onError = Timber::e
             )
             .addTo(disposables)
@@ -145,7 +155,7 @@ class VenueListActivity : AppCompatActivity() {
             .error
             .scheduleOnBackgroundThread()
             .subscribeBy(
-                onNext = { Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG) },
+                onNext = { Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show() },
                 onError = Timber::e
             )
             .addTo(disposables)
@@ -183,15 +193,9 @@ class VenueListActivity : AppCompatActivity() {
         startActivity(myAppSettings)
     }
 
-    override fun onStop() {
-        super.onStop()
-        disposables.clear()
-    }
-
     private fun onItemClick(venue: Venue) {
         VenueDetailsActivity.startActivity(this, venue.id)
     }
-
 
     companion object {
         private const val SEARCH_DEBOUNCE_INTERVAL_MS = 1000L

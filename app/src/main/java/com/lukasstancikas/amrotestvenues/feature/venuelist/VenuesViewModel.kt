@@ -50,7 +50,6 @@ class VenuesViewModel(private val repo: VenueRepository) : BaseViewModel() {
         )
             .take(1)
             .singleElement()
-            .withLoadingEvents()
             .flatMapObservable {
                 repo
                     .getVenues(it.first, it.second) { error ->
@@ -60,6 +59,7 @@ class VenuesViewModel(private val repo: VenueRepository) : BaseViewModel() {
                     .distinctUntilChanged()
                     .debounce(DB_DEBOUNCE_INTERVAL_MS, TimeUnit.MILLISECONDS)
             }
+            .withLoadingEvents()
             .subscribeBy(
                 onNext = _venues::onNext,
                 onError = Timber::e

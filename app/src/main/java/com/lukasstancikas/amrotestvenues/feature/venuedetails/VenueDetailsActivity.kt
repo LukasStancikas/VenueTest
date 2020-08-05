@@ -12,8 +12,6 @@ import com.lukasstancikas.amrotestvenues.databinding.ActivityVenueDetailsBinding
 import com.lukasstancikas.amrotestvenues.db.VenueWithPhotos
 import com.lukasstancikas.amrotestvenues.extensions.ExtraNotNull
 import com.lukasstancikas.amrotestvenues.extensions.scheduleOnBackgroundThread
-import com.lukasstancikas.amrotestvenues.feature.venuelist.VenueAdapter
-import com.lukasstancikas.amrotestvenues.model.Venue
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -21,7 +19,6 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class VenueDetailsActivity : AppCompatActivity() {
-
     private val venueId by ExtraNotNull(VENUE_ID_KEY, "")
 
     private val adapter = VenuePhotoAdapter()
@@ -42,6 +39,11 @@ class VenueDetailsActivity : AppCompatActivity() {
         super.onStart()
         bindToViewModel()
         bindToViews()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        disposables.clear()
     }
 
     private fun bindToViews() {
@@ -78,7 +80,7 @@ class VenueDetailsActivity : AppCompatActivity() {
             .error
             .scheduleOnBackgroundThread()
             .subscribeBy(
-                onNext = { Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG) },
+                onNext = { Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show() },
                 onError = Timber::e
             )
             .addTo(disposables)
@@ -95,7 +97,7 @@ class VenueDetailsActivity : AppCompatActivity() {
             getString(R.string.label_instagram, venueWithPhotos.venue.contact?.instagram)
         )
         binding.contacts.text = TextUtils.join("\n", contacts)
-        // If API returns only 1 photo, duplicatin "venueWithPhotos.photos" with "+" operator is recommended
+        // If API returns only 1 photo, duplicating "venueWithPhotos.photos" with "+" operator is recommended
         adapter.submitList(venueWithPhotos.photos)
     }
 

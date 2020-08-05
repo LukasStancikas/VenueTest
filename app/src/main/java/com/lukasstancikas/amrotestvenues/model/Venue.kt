@@ -20,6 +20,7 @@ data class Venue(
     constructor() : this("", "", "", null, null, null, null)
 
     fun getPhotoList(): List<VenuePhoto> {
-        return photos?.groups?.flatMap { it.items }?.map { it.copy(venueId = this.id) } ?: emptyList()
+        return photos?.groups?.flatMap { it.items }?.map { it.copy(venueId = this.id) }
+            ?: emptyList()
     }
 }

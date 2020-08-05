@@ -5,7 +5,6 @@ import com.lukasstancikas.amrotestvenues.db.AppDatabase
 import com.lukasstancikas.amrotestvenues.db.VenueWithPhotos
 import com.lukasstancikas.amrotestvenues.model.LatLng
 import com.lukasstancikas.amrotestvenues.model.Venue
-import com.lukasstancikas.amrotestvenues.model.VenuePhoto
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -23,7 +22,7 @@ class VenueRepositoryImpl(
         val dbCall = db
             .venueDao()
             .getAll()
-                // Venue Query + Limit not working in Room DB Query, have to fake post SQL
+            // Venue Query + Limit not working in Room DB Query, have to fake post SQL
             .map { it.filter { it.name.toLowerCase().contains(query.toLowerCase()) } }
 
         return Observable.merge(
